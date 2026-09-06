@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ভিডিও পোর্টাল ও কনটেন্ট আনলকার</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#f59e0b',
+              goldHover: '#d97706',
+              darkBg: '#0f1015',
+              cardDark: '#181a20',
+              borderDark: '#262933',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* কাস্টম স্ক্রলবার ও মসৃণ রূপান্তর */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .pulse-glow {
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-brand-darkBg dark:text-gray-100 min-h-screen transition-colors duration-200 font-sans select-none">
+
+  <!-- অ্যাপ কন্টেইনার (মোবাইল ও ট্যাবলেট ফ্রেন্ডলি সেন্টার্ড লেআউট) -->
+  <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col bg-white dark:bg-brand-darkBg shadow-2xl relative pb-10">
+
+    <!-- হেডার বার -->
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-brand-darkBg/95 backdrop-blur border-b border-gray-200 dark:border-brand-borderDark px-4 py-3 flex items-center justify-between">
+      <!-- ব্যাক বাটন (ডিটেইল পেজে দৃশ্যমান হবে) অথবা মেনু বাটন -->
+      <div class="flex items-center space-x-3">
+        <button id="navBackBtn" onclick="showHomePage()" class="hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        </button>
+
+        <button id="menuBtn" onclick="toggleSidebar(true)" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+
+        <!-- লোগো ও টাইটেল -->
+        <h1 class="text-lg font-extrabold tracking-wide text-brand-gold flex items-center gap-1 cursor-pointer" onclick="showHomePage()">
+          <span>D@shi</span>
+          <span class="text-gray-900 dark:text-white">Vidxzzz</span>
+        </h1>
+      </div>
+
+      <!-- ডানপাশের কন্ট্রোল (ডার্ক মোড টগল ও সার্চ) -->
+      <div class="flex items-center space-x-2">
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-brand-gold transition-transform active:scale-95" title="থিম পরিবর্তন">
+          <!-- মুন আইকন (ডার্ক মোডের জন্য) -->
+          <svg id="moonIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <!-- সান আইকন (লাইট মোডের জন্য) -->
+          <svg id="sunIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+
+        <button onclick="toggleSearchBar()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- সার্চ বার প্যানেল (লুকানো/প্রদর্শিত) -->
+    <div id="searchPanel" class="hidden px-4 py-2 bg-gray-50 dark:bg-brand-cardDark border-b border-gray-200 dark:border-brand-borderDark">
+      <div class="relative">
+        <input type="text" id="searchInput" oninput="filterVideosBySearch()" placeholder="ভিডিও বা কালেকশন খুঁজুন..." class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-brand-gold">
+        <svg class="w-4 h-4 absolute left-3 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- সাইডবার / নেভিগেশন ড্রয়ার -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-brand-cardDark z-50 transform -translate-x-full transition-transform duration-300 flex flex-col p-5 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-brand-borderDark">
+        <span class="text-xl font-black text-brand-gold">D@shi মেনু</span>
+        <button onclick="toggleSidebar(false)" class="p-1 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+          ✕
+        </button>
+      </div>
+      <nav class="mt-6 flex flex-col space-y-3 font-medium text-sm">
+        <a href="javascript:void(0)" onclick="selectCategory('All'); toggleSidebar(false);" class="p-3 rounded-lg bg-brand-gold/10 text-brand-gold font-bold">হোম ও সব কালেকশন</a>
+        <a href="javascript:void(0)" onclick="selectCategory('New'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">নতুন কালেকশন</a>
+        <a href="javascript:void(0)" onclick="selectCategory('Viral'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">ভাইরাল ক্লিপস</a>
+        <a href="javascript:void(0)" onclick="selectCategory('Movies'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">মুভি ও ড্রামা</a>
+      </nav>
+      <div class="mt-auto pt-6 text-xs text-center text-gray-400 border-t border-gray-200 dark:border-brand-borderDark">
+        © 2026 D@shi Vidxzzz পোর্টাল
+      </div>
+    </aside>
+
+    <!-- ১. হোমভিউ (ভিডিও ফিড ও ক্যাটাগরি) -->
+    <main id="homeView" class="p-4 space-y-4">
+
+      <!-- ক্যাটাগরি ফিল্টার পিলস (হরিজন্টাল স্ক্রল) -->
+      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 text-xs font-semibold">
+        <button onclick="selectCategory('All')" class="category-chip active-chip px-4 py-2 rounded-full border border-brand-gold bg-brand-gold text-white whitespace-nowrap shadow-sm">All Videos</button>
+        <button onclick="selectCategory('New')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">New Collection</button>
+        <button onclick="selectCategory('Viral')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">বাংলা স্পেশাল</button>
+        <button onclick="selectCategory('Movies')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">Movie & Natok</button>
+      </div>
+
+      <!-- ভিডিও কার্ড তালিকা কন্টেইনার -->
+      <div id="videoList" class="space-y-5">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকালি লোড হবে -->
+      </div>
+    </main>
+
+    <!-- ২. ভিডিও ডিটেইল / আনলকার পেজ (শুরুতে লুকানো) -->
+    <section id="detailView" class="hidden p-4 space-y-4">
+      <!-- থাম্বনেইল প্রিভিউ বক্স -->
+      <div class="relative w-full rounded-2xl overflow-hidden bg-black aspect-video shadow-lg border border-gray-200 dark:border-brand-borderDark">
+        <img id="detailThumb" src="" alt="Thumbnail" class="w-full h-full object-cover">
+        <div class="absolute bottom-2 right-2 px-2.5 py-1 bg-black/80 backdrop-blur rounded-md text-[11px] font-bold text-white" id="detailDuration">
+          --
+        </div>
+      </div>
+
+      <!-- লাইক ও ভিউ বার -->
+      <div class="grid grid-cols-2 gap-3 text-sm font-semibold">
+        <button id="likeDetailBtn" onclick="toggleDetailLike()" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-cardDark hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+          <svg class="w-5 h-5 text-red-500 fill-current" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span id="detailLikeCount">0 Likes</span>
+        </button>
+
+        <div class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-cardDark text-gray-600 dark:text-gray-300">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          <span id="detailViewCount">0 Views</span>
+        </div>
+      </div>
+
+      <!-- আনলকার বক্স (Content Unlocker / Ad Gating Box) -->
+      <div class="p-4 rounded-2xl bg-gray-50 dark:bg-brand-cardDark border border-yellow-500/30 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 text-brand-gold font-bold text-sm">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+            </svg>
+            <span id="adGoalTitle">ভিডিও আনলক করতে ৩টি বিজ্ঞাপন দেখুন</span>
+          </div>
+        </div>
+
+        <!-- প্রগ্রেস ট্র্যাক -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400">
+            <span>অগ্রগতি (Progress):</span>
+            <span id="adProgressText">0/3 Completed</span>
+          </div>
+          <div class="w-full h-2.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div id="adProgressBar" class="h-full bg-brand-gold transition-all duration-300 rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- আনলক বাটন -->
+        <button id="unlockActionBtn" onclick="triggerAdUnlockProcess()" class="w-full py-3.5 px-4 bg-brand-gold hover:bg-brand-goldHover text-black font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98]">
+          <svg id="lockIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span id="unlockBtnLabel">Unlock Video</span>
+        </button>
+
+        <!-- নির্দেশাবলী -->
+        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed text-center">
+          ভিডিওটি দেখার জন্য উপরের "Unlock Video" বাটনে ক্লিক করুন। বিজ্ঞাপন সম্পন্ন হলে সরাসরি ডাউনলোড ও ওয়াচ লিংক চলে আসবে।
+        </p>
+      </div>
+
+      <!-- ভিডিও বিবরণ ও টাইটেল -->
+      <div class="space-y-2 pt-2 border-t border-gray-200 dark:border-brand-borderDark">
+        <h2 id="detailTitle" class="text-base font-bold text-gray-900 dark:text-white leading-snug">
+          --
+        </h2>
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+          ক্যাটাগরি: <span id="detailCategory" class="text-brand-gold font-medium">--</span>
+        </div>
+      </div>
+
+      <!-- স্ক্রিনশট ও প্রিভিউ গ্যালারি -->
+      <div class="space-y-2 pt-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">স্ক্রিনশটস প্রিভিউ</h3>
+        <div class="grid grid-cols-2 gap-2" id="detailScreenshots">
+          <!-- ডাইনামিক স্ক্রিনশট প্রিভিউ -->
+        </div>
+      </div>
+    </section>
+
+    <!-- বিজ্ঞাপন লোডিং সিমুলেশন মোডাল -->
+    <div id="adModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col items-center justify-center p-6 text-center">
+      <div class="w-16 h-16 border-4 border-brand-gold border-t-transparent rounded-full animate-spin mb-4"></div>
+      <h3 class="text-lg font-bold text-white mb-1">বিজ্ঞাপন লোড হচ্ছে...</h3>
+      <p class="text-xs text-gray-300 max-w-xs mb-4">অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করুন। স্পন্সর পৃষ্ঠাটি নতুন ট্যাবে ওপেন হবে।</p>
+      <div class="text-brand-gold font-mono font-bold text-sm" id="countdownTimer">3s</div>
+    </div>
+
+    <!-- নোটিফিকেশন টোস্ট মেসেজ -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-full text-xs font-semibold shadow-xl opacity-0 transition-opacity pointer-events-none z-50">
+      বিজ্ঞপ্তি
+    </div>
+
+  </div>
+
+  <!-- সম্পূর্ণ স্ক্রিপ্ট লজিক -->
+  <script>
+    // আপনার দেওয়া ছবিগুলো দিয়ে আলাদা আলাদা ভিডিও আইটেম ডাটাবেজ
+    const videoData = [
+      {
+        id: 1,
+        title: "সে যখন হাসে দুনিয়া থমকে যায় || স্পেশাল মেগা কালেকশন",
+        category: "Viral",
+        duration: "8 Videos",
+        likes: 658,
+        views: 1240,
+        liked: false,
+        thumb: "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg",
+        screenshots: [
+          "https://i.ibb.co.com/LDsh4vMD/file-00000000662481fb8d2ef34dfb0eb26e.png",
+          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 2,
+        title: "এক্সক্লুসিভ কালেকশন ভিডিও ফুল এইচডি মেগা প্যাক!!",
+        category: "New",
+        duration: "9 clips",
+        likes: 832,
+        views: 2150,
+        liked: false,
+        thumb: "https://i.ibb.co.com/LDsh4vMD/file-00000000662481fb8d2ef34dfb0eb26e.png",
+        screenshots: [
+          "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg",
+          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png"
+        ],
+        requiredAds: 4,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 3,
+        title: "স্ত্রীকে অবহেলা! কেন এমন করছে? বাংলা ড্রামা স্পেশাল",
+        category: "Viral",
+        duration: "19min",
+        likes: 721,
+        views: 1890,
+        liked: false,
+        thumb: "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png",
+        screenshots: [
+          "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg",
+          "https://i.ibb.co.com/7J5zDszb/8cbf3493-9c0b-43ec-941d-94fe4b7e8794.png"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 4,
+        title: "দুই বন্ধু একসাথে স্পেশাল মেগা আনলিমিটেড ভিডিও ক্লিপস",
+        category: "New",
+        duration: "4min",
+        likes: 815,
+        views: 2430,
+        liked: false,
+        thumb: "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg",
+        screenshots: [
+          "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
+          "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg"
+        ],
+        requiredAds: 2,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 5,
+        title: "Dashi Unlimited স্পেশাল কালেকশন পর্ব - মেগা ড্রাইভ লিংক",
+        category: "Viral",
+        duration: "10 Clips",
+        likes: 1319,
+        views: 3520,
+        liked: false,
+        thumb: "https://i.ibb.co.com/7J5zDszb/8cbf3493-9c0b-43ec-941d-94fe4b7e8794.png",
+        screenshots: [
+          "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
+          "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 6,
+        title: "কি তোমায় না দিলো! দেখে নাও তাড়াতাড়ি NEW Collection!!",
+        category: "Viral",
+        duration: "2min",
+        likes: 2066,
+        views: 4890,
+        liked: false,
+        thumb: "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
+        screenshots: [
+          "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg",
+          "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png"
+        ],
+        requiredAds: 4,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 7,
+        title: "টক্সিক অ্যাকশন থ্রিলার HD 720p & 1080p ফুল মুভি ড্রাইভ",
+        category: "Movies",
+        duration: "3.57 Hours",
+        likes: 693,
+        views: 3100,
+        liked: false,
+        thumb: "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg",
+        screenshots: [
+          "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg",
+          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 8,
+        title: "ভাবীকে একা পেয়ে শেষে কি করলো!! New Collection",
+        category: "Viral",
+        duration: "13min",
+        likes: 1719,
+        views: 4120,
+        liked: false,
+        thumb: "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg",
+        screenshots: [
+          "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png",
+          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 9,
+        title: "একদম ভাইরাল কালেকশন ভিডিও ফুল এইচডি কোয়ালিটি",
+        category: "New",
+        duration: "10 Clips",
+        likes: 997,
+        views: 2840,
+        liked: false,
+        thumb: "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png",
+        screenshots: [
+          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp",
+          "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg"
+        ],
+        requiredAds: 3,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      },
+      {
+        id: 10,
+        title: "স্পেশাল ভাইরাল নাটক ও ক্লিপস সম্পূর্ণ ফ্রিতে দেখে নিন",
+        category: "Movies",
+        duration: "25min",
+        likes: 1120,
+        views: 3900,
+        liked: false,
+        thumb: "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp",
+        screenshots: [
+          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png",
+          "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg"
+        ],
+        requiredAds: 4,
+        watchedAds: 0,
+        targetLink: "https://t.me"
+      }
+    ];
+
+    let currentVideoId = null;
+    let currentCategory = 'All';
+    let isDarkMode = true;
+    
+    // আপনার দেওয়া বিজ্ঞাপনের নির্দিষ্ট নেটওয়ার্ক স্মার্টলিংক
+    const AD_NETWORK_URL = "https://www.profitableratecpmnetwork.com/syp87vwp?key=f6f33d081102bce4009209a211ad25dc";
+
+    // পেজ লোড হলে ইনিশিয়ালাইজেশন
+    window.addEventListener('DOMContentLoaded', () => {
+      // ডিফল্ট ডার্ক মোড সেটআপ
+      document.documentElement.classList.add('dark');
+      updateThemeIcons();
+      renderVideoCards(videoData);
+    });
+
+    // ডার্ক ও লাইট থিম পরিবর্তন
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      updateThemeIcons();
+    }
+
+    function updateThemeIcons() {
+      const sunIcon = document.getElementById('sunIcon');
+      const moonIcon = document.getElementById('moonIcon');
+      if (isDarkMode) {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+    }
+
+    // সাইডবার টগল
+    function toggleSidebar(open) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (open) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    // সার্চ বার টগল
+    function toggleSearchBar() {
+      const panel = document.getElementById('searchPanel');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        document.getElementById('searchInput').focus();
+      }
+    }
+
+    // ভিডিও কার্ড রেন্ডার ফাংশন
+    function renderVideoCards(videos) {
+      const listContainer = document.getElementById('videoList');
+      listContainer.innerHTML = '';
+
+      if (videos.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-gray-400 text-sm">
+            কোনো ভিডিও পাওয়া যায়নি!
+          </div>
+        `;
+        return;
+      }
+
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = "rounded-2xl overflow-hidden bg-white dark:bg-brand-cardDark border border-gray-200 dark:border-brand-borderDark shadow-md transition-all hover:shadow-xl";
+
+        card.innerHTML = `
+          <!-- থাম্বনেইল অংশ -->
+          <div class="relative w-full aspect-video bg-black cursor-pointer overflow-hidden group" onclick="openVideoDetail(${video.id})">
+            <img src="${video.thumb}" alt="${video.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x340/181a20/f59e0b?text=Video+Thumbnail'">
+            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
+            
+            <!-- সময় / ক্লিপস ব্যাজ -->
+            <div class="absolute bottom-2 right-2 px-2 py-0.5 bg-black/85 backdrop-blur rounded text-[11px] font-bold text-white">
+              ${video.duration}
+            </div>
+
+            <!-- প্লে আইকন ওভারলে -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition">
+              <div class="w-12 h-12 rounded-full bg-brand-gold/90 text-black flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
+                <svg class="w-6 h-6 fill-current ml-0.5" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- বিস্তারিত ও মেটাডাটা -->
+          <div class="p-3.5 space-y-3">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-snug cursor-pointer line-clamp-2 hover:text-brand-gold transition" onclick="openVideoDetail(${video.id})">
+              ${video.title}
+            </h3>
+
+            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-100 dark:border-brand-borderDark">
+              <div class="flex items-center space-x-4">
+                <!-- লাইক বোতাম -->
+                <button onclick="toggleCardLike(event, ${video.id})" class="flex items-center gap-1 hover:text-red-500 transition ${video.liked ? 'text-red-500 font-bold' : ''}">
+                  <svg class="w-4 h-4 ${video.liked ? 'fill-current' : 'fill-none stroke-current'}" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  <span>${video.likes}</span>
+                </button>
+
+                <!-- ভিউ কাউন্ট -->
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <span>${video.views}</span>
+                </div>
+              </div>
+
+              <!-- শেয়ার বাটন -->
+              <button onclick="shareLink(event, '${video.title}')" class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-brand-gold transition" title="শেয়ার করুন">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    // ফিল্টার ক্যাটাগরি
+    function selectCategory(category) {
+      currentCategory = category;
+      const chips = document.querySelectorAll('.category-chip');
+      chips.forEach(chip => {
+        if (chip.textContent.includes(category) || (category === 'All' && chip.textContent.includes('All'))) {
+          chip.className = "category-chip active-chip px-4 py-2 rounded-full border border-brand-gold bg-brand-gold text-white whitespace-nowrap shadow-sm";
+        } else {
+          chip.className = "category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap";
+        }
+      });
+
+      if (category === 'All') {
+        renderVideoCards(videoData);
+      } else {
+        const filtered = videoData.filter(v => v.category === category);
+        renderVideoCards(filtered);
+      }
+    }
+
+    // সার্চ ফিল্টার
+    function filterVideosBySearch() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = videoData.filter(v => v.title.toLowerCase().includes(query));
+      renderVideoCards(filtered);
+    }
+
+    // ভিডিও ডিটেইল ওপেন করা
+    function openVideoDetail(id) {
+      currentVideoId = id;
+      const video = videoData.find(v => v.id === id);
+      if (!video) return;
+
+      // ভিউ পরিবর্তন
+      document.getElementById('homeView').classList.add('hidden');
+      document.getElementById('detailView').classList.remove('hidden');
+      document.getElementById('menuBtn').classList.add('hidden');
+      document.getElementById('navBackBtn').classList.remove('hidden');
+
+      // ডাটা বাইন্ডিং
+      document.getElementById('detailThumb').src = video.thumb;
+      document.getElementById('detailDuration').textContent = video.duration;
+      document.getElementById('detailTitle').textContent = video.title;
+      document.getElementById('detailCategory').textContent = video.category;
+      document.getElementById('detailLikeCount').textContent = `${video.likes} Likes`;
+      document.getElementById('detailViewCount').textContent = `${video.views + 1} Views`;
+      video.views += 1;
+
+      // স্ক্রিনশট গ্যালারি
+      const shotsContainer = document.getElementById('detailScreenshots');
+      shotsContainer.innerHTML = '';
+      video.screenshots.forEach(shot => {
+        const img = document.createElement('img');
+        img.src = shot;
+        img.className = "rounded-lg border border-gray-200 dark:border-brand-borderDark object-cover w-full h-24";
+        shotsContainer.appendChild(img);
+      });
+
+      // আনলকার স্টেট আপডেট
+      updateUnlockerUI(video);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // হোমভিউতে ফেরত যাওয়া
+    function showHomePage() {
+      document.getElementById('detailView').classList.add('hidden');
+      document.getElementById('homeView').classList.remove('hidden');
+      document.getElementById('navBackBtn').classList.add('hidden');
+      document.getElementById('menuBtn').classList.remove('hidden');
+      currentVideoId = null;
+      renderVideoCards(videoData);
+    }
+
+    // আনলকার ইন্টারফেস আপডেট
+    function updateUnlockerUI(video) {
+      const progressPercent = (video.watchedAds / video.requiredAds) * 100;
+      document.getElementById('adProgressBar').style.width = `${progressPercent}%`;
+      document.getElementById('adProgressText').textContent = `${video.watchedAds}/${video.requiredAds} Completed`;
+      document.getElementById('adGoalTitle').textContent = `ভিডিও আনলক করতে ${video.requiredAds}টি বিজ্ঞাপন দেখুন`;
+
+      const btnLabel = document.getElementById('unlockBtnLabel');
+      const actionBtn = document.getElementById('unlockActionBtn');
+
+      if (video.watchedAds >= video.requiredAds) {
+        btnLabel.textContent = "ভিডিও ডাউনলোড / প্লে করুন";
+        actionBtn.className = "w-full py-3.5 px-4 bg-green-500 hover:bg-green-600 text-white font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98] pulse-glow";
+        document.getElementById('lockIcon').innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+        `;
+      } else {
+        btnLabel.textContent = `Unlock Video (${video.watchedAds}/${video.requiredAds})`;
+        actionBtn.className = "w-full py-3.5 px-4 bg-brand-gold hover:bg-brand-goldHover text-black font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98]";
+        document.getElementById('lockIcon').innerHTML = `
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        `;
+      }
+    }
+
+    // অ্যাড আনলক প্রক্রিয়া এবং পপআপ সিমুলেশন
+    function triggerAdUnlockProcess() {
+      const video = videoData.find(v => v.id === currentVideoId);
+      if (!video) return;
+
+      // যদি ইতোমধ্যে সব বিজ্ঞাপন দেখা হয়ে যায় -> লিংকে রিডাইরেক্ট হবে
+      if (video.watchedAds >= video.requiredAds) {
+        showToast("ভিডিও আনলক হয়েছে! লিংকে নিয়ে যাওয়া হচ্ছে...");
+        setTimeout(() => {
+          window.open(video.targetLink, '_blank');
+        }, 800);
+        return;
+      }
+
+      // বিজ্ঞাপন প্রদর্শন মোডাল ওপেন
+      const modal = document.getElementById('adModal');
+      const timerEl = document.getElementById('countdownTimer');
+      modal.classList.remove('hidden');
+
+      let timeLeft = 3;
+      timerEl.textContent = `${timeLeft}s`;
+
+      const timer = setInterval(() => {
+        timeLeft -= 1;
+        if (timeLeft > 0) {
+          timerEl.textContent = `${timeLeft}s`;
+        } else {
+          clearInterval(timer);
+          modal.classList.add('hidden');
+
+          // বিজ্ঞাপন সমাপ্তি কাউন্ট বৃদ্ধি
+          video.watchedAds += 1;
+          updateUnlockerUI(video);
+
+          if (video.watchedAds >= video.requiredAds) {
+            showToast("অভিনন্দন! ভিডিওটি সফলভাবে আনলক হয়েছে 🎉");
+          } else {
+            showToast(`বিজ্ঞাপন সম্পন্ন! আর মাত্র ${video.requiredAds - video.watchedAds}টি বাকি`);
+          }
+
+          // আপনার দেওয়া নির্ধারিত বিজ্ঞাপন লিংক নতুন ট্যাবে ওপেন হবে
+          window.open(AD_NETWORK_URL, '_blank');
+        }
+      }, 1000);
+    }
+
+    // কার্ডের লাইক টগল
+    function toggleCardLike(event, id) {
+      event.stopPropagation();
+      const video = videoData.find(v => v.id === id);
+      if (video) {
+        video.liked = !video.liked;
+        video.likes += video.liked ? 1 : -1;
+        renderVideoCards(videoData);
+      }
+    }
+
+    // ডিটেইল পেজের লাইক টগল
+    function toggleDetailLike() {
+      const video = videoData.find(v => v.id === currentVideoId);
+      if (video) {
+        video.liked = !video.liked;
+        video.likes += video.liked ? 1 : -1;
+        document.getElementById('detailLikeCount').textContent = `${video.likes} Likes`;
+      }
+    }
+
+    // শেয়ার ফাংশন (ক্লিপবোর্ড বা নেটিভ শেয়ার)
+    function shareLink(event, title) {
+      event.stopPropagation();
+      const shareUrl = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          url: shareUrl
+        }).catch(() => {});
+      } else {
+        // ফলব্যাক কপি
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = shareUrl;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        showToast("ভিডিও লিংক কপি করা হয়েছে!");
+      }
+    }
+
+    // টোস্ট নোটিফিকেশন প্রদর্শন
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
