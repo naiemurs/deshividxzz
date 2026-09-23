@@ -1,751 +1,730 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ভিডিও পোর্টাল ও কনটেন্ট আনলকার</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              gold: '#f59e0b',
-              goldHover: '#d97706',
-              darkBg: '#0f1015',
-              cardDark: '#181a20',
-              borderDark: '#262933',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    /* কাস্টম স্ক্রলবার ও মসৃণ রূপান্তর */
-    ::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .pulse-glow {
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-    }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-900 dark:bg-brand-darkBg dark:text-gray-100 min-h-screen transition-colors duration-200 font-sans select-none">
-
-  <!-- অ্যাপ কন্টেইনার (মোবাইল ও ট্যাবলেট ফ্রেন্ডলি সেন্টার্ড লেআউট) -->
-  <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col bg-white dark:bg-brand-darkBg shadow-2xl relative pb-10">
-
-    <!-- হেডার বার -->
-    <header class="sticky top-0 z-40 bg-white/95 dark:bg-brand-darkBg/95 backdrop-blur border-b border-gray-200 dark:border-brand-borderDark px-4 py-3 flex items-center justify-between">
-      <!-- ব্যাক বাটন (ডিটেইল পেজে দৃশ্যমান হবে) অথবা মেনু বাটন -->
-      <div class="flex items-center space-x-3">
-        <button id="navBackBtn" onclick="showHomePage()" class="hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-200">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-        </button>
-
-        <button id="menuBtn" onclick="toggleSidebar(true)" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-200">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-
-        <!-- লোগো ও টাইটেল -->
-        <h1 class="text-lg font-extrabold tracking-wide text-brand-gold flex items-center gap-1 cursor-pointer" onclick="showHomePage()">
-          <span>D@shi</span>
-          <span class="text-gray-900 dark:text-white">Vidxzzz</span>
-        </h1>
-      </div>
-
-      <!-- ডানপাশের কন্ট্রোল (ডার্ক মোড টগল ও সার্চ) -->
-      <div class="flex items-center space-x-2">
-        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-brand-gold transition-transform active:scale-95" title="থিম পরিবর্তন">
-          <!-- মুন আইকন (ডার্ক মোডের জন্য) -->
-          <svg id="moonIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-          </svg>
-          <!-- সান আইকন (লাইট মোডের জন্য) -->
-          <svg id="sunIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
-          </svg>
-        </button>
-
-        <button onclick="toggleSearchBar()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-brand-cardDark text-gray-700 dark:text-gray-300">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <!-- সার্চ বার প্যানেল (লুকানো/প্রদর্শিত) -->
-    <div id="searchPanel" class="hidden px-4 py-2 bg-gray-50 dark:bg-brand-cardDark border-b border-gray-200 dark:border-brand-borderDark">
-      <div class="relative">
-        <input type="text" id="searchInput" oninput="filterVideosBySearch()" placeholder="ভিডিও বা কালেকশন খুঁজুন..." class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-brand-gold">
-        <svg class="w-4 h-4 absolute left-3 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-      </div>
-    </div>
-
-    <!-- সাইডবার / নেভিগেশন ড্রয়ার -->
-    <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-72 h-full bg-white dark:bg-brand-cardDark z-50 transform -translate-x-full transition-transform duration-300 flex flex-col p-5 shadow-2xl">
-      <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-brand-borderDark">
-        <span class="text-xl font-black text-brand-gold">D@shi মেনু</span>
-        <button onclick="toggleSidebar(false)" class="p-1 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-          ✕
-        </button>
-      </div>
-      <nav class="mt-6 flex flex-col space-y-3 font-medium text-sm">
-        <a href="javascript:void(0)" onclick="selectCategory('All'); toggleSidebar(false);" class="p-3 rounded-lg bg-brand-gold/10 text-brand-gold font-bold">হোম ও সব কালেকশন</a>
-        <a href="javascript:void(0)" onclick="selectCategory('New'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">নতুন কালেকশন</a>
-        <a href="javascript:void(0)" onclick="selectCategory('Viral'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">ভাইরাল ক্লিপস</a>
-        <a href="javascript:void(0)" onclick="selectCategory('Movies'); toggleSidebar(false);" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">মুভি ও ড্রামা</a>
-      </nav>
-      <div class="mt-auto pt-6 text-xs text-center text-gray-400 border-t border-gray-200 dark:border-brand-borderDark">
-        © 2026 D@shi Vidxzzz পোর্টাল
-      </div>
-    </aside>
-
-    <!-- ১. হোমভিউ (ভিডিও ফিড ও ক্যাটাগরি) -->
-    <main id="homeView" class="p-4 space-y-4">
-
-      <!-- ক্যাটাগরি ফিল্টার পিলস (হরিজন্টাল স্ক্রল) -->
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1 text-xs font-semibold">
-        <button onclick="selectCategory('All')" class="category-chip active-chip px-4 py-2 rounded-full border border-brand-gold bg-brand-gold text-white whitespace-nowrap shadow-sm">All Videos</button>
-        <button onclick="selectCategory('New')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">New Collection</button>
-        <button onclick="selectCategory('Viral')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">বাংলা স্পেশাল</button>
-        <button onclick="selectCategory('Movies')" class="category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap">Movie & Natok</button>
-      </div>
-
-      <!-- ভিডিও কার্ড তালিকা কন্টেইনার -->
-      <div id="videoList" class="space-y-5">
-        <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকালি লোড হবে -->
-      </div>
-    </main>
-
-    <!-- ২. ভিডিও ডিটেইল / আনলকার পেজ (শুরুতে লুকানো) -->
-    <section id="detailView" class="hidden p-4 space-y-4">
-      <!-- থাম্বনেইল প্রিভিউ বক্স -->
-      <div class="relative w-full rounded-2xl overflow-hidden bg-black aspect-video shadow-lg border border-gray-200 dark:border-brand-borderDark">
-        <img id="detailThumb" src="" alt="Thumbnail" class="w-full h-full object-cover">
-        <div class="absolute bottom-2 right-2 px-2.5 py-1 bg-black/80 backdrop-blur rounded-md text-[11px] font-bold text-white" id="detailDuration">
-          --
-        </div>
-      </div>
-
-      <!-- লাইক ও ভিউ বার -->
-      <div class="grid grid-cols-2 gap-3 text-sm font-semibold">
-        <button id="likeDetailBtn" onclick="toggleDetailLike()" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-cardDark hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-          <svg class="w-5 h-5 text-red-500 fill-current" viewBox="0 0 24 24">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span id="detailLikeCount">0 Likes</span>
-        </button>
-
-        <div class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-gray-200 dark:border-brand-borderDark bg-gray-50 dark:bg-brand-cardDark text-gray-600 dark:text-gray-300">
-          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-          </svg>
-          <span id="detailViewCount">0 Views</span>
-        </div>
-      </div>
-
-      <!-- আনলকার বক্স (Content Unlocker / Ad Gating Box) -->
-      <div class="p-4 rounded-2xl bg-gray-50 dark:bg-brand-cardDark border border-yellow-500/30 space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 text-brand-gold font-bold text-sm">
-            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-            </svg>
-            <span id="adGoalTitle">ভিডিও আনলক করতে ৩টি বিজ্ঞাপন দেখুন</span>
-          </div>
-        </div>
-
-        <!-- প্রগ্রেস ট্র্যাক -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400">
-            <span>অগ্রগতি (Progress):</span>
-            <span id="adProgressText">0/3 Completed</span>
-          </div>
-          <div class="w-full h-2.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-            <div id="adProgressBar" class="h-full bg-brand-gold transition-all duration-300 rounded-full" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <!-- আনলক বাটন -->
-        <button id="unlockActionBtn" onclick="triggerAdUnlockProcess()" class="w-full py-3.5 px-4 bg-brand-gold hover:bg-brand-goldHover text-black font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98]">
-          <svg id="lockIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-          </svg>
-          <span id="unlockBtnLabel">Unlock Video</span>
-        </button>
-
-        <!-- নির্দেশাবলী -->
-        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed text-center">
-          ভিডিওটি দেখার জন্য উপরের "Unlock Video" বাটনে ক্লিক করুন। বিজ্ঞাপন সম্পন্ন হলে সরাসরি ডাউনলোড ও ওয়াচ লিংক চলে আসবে।
-        </p>
-      </div>
-
-      <!-- ভিডিও বিবরণ ও টাইটেল -->
-      <div class="space-y-2 pt-2 border-t border-gray-200 dark:border-brand-borderDark">
-        <h2 id="detailTitle" class="text-base font-bold text-gray-900 dark:text-white leading-snug">
-          --
-        </h2>
-        <div class="text-xs text-gray-500 dark:text-gray-400">
-          ক্যাটাগরি: <span id="detailCategory" class="text-brand-gold font-medium">--</span>
-        </div>
-      </div>
-
-      <!-- স্ক্রিনশট ও প্রিভিউ গ্যালারি -->
-      <div class="space-y-2 pt-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">স্ক্রিনশটস প্রিভিউ</h3>
-        <div class="grid grid-cols-2 gap-2" id="detailScreenshots">
-          <!-- ডাইনামিক স্ক্রিনশট প্রিভিউ -->
-        </div>
-      </div>
-    </section>
-
-    <!-- বিজ্ঞাপন লোডিং সিমুলেশন মোডাল -->
-    <div id="adModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col items-center justify-center p-6 text-center">
-      <div class="w-16 h-16 border-4 border-brand-gold border-t-transparent rounded-full animate-spin mb-4"></div>
-      <h3 class="text-lg font-bold text-white mb-1">বিজ্ঞাপন লোড হচ্ছে...</h3>
-      <p class="text-xs text-gray-300 max-w-xs mb-4">অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করুন। স্পন্সর পৃষ্ঠাটি নতুন ট্যাবে ওপেন হবে।</p>
-      <div class="text-brand-gold font-mono font-bold text-sm" id="countdownTimer">3s</div>
-    </div>
-
-    <!-- নোটিফিকেশন টোস্ট মেসেজ -->
-    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-full text-xs font-semibold shadow-xl opacity-0 transition-opacity pointer-events-none z-50">
-      বিজ্ঞপ্তি
-    </div>
-
-  </div>
-
-  <!-- সম্পূর্ণ স্ক্রিপ্ট লজিক -->
-  <script>
-    // আপনার দেওয়া ছবিগুলো দিয়ে আলাদা আলাদা ভিডিও আইটেম ডাটাবেজ
-    const videoData = [
-      {
-        id: 1,
-        title: "সে যখন হাসে দুনিয়া থমকে যায় || স্পেশাল মেগা কালেকশন",
-        category: "Viral",
-        duration: "8 Videos",
-        likes: 658,
-        views: 1240,
-        liked: false,
-        thumb: "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg",
-        screenshots: [
-          "https://i.ibb.co.com/LDsh4vMD/file-00000000662481fb8d2ef34dfb0eb26e.png",
-          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 2,
-        title: "এক্সক্লুসিভ কালেকশন ভিডিও ফুল এইচডি মেগা প্যাক!!",
-        category: "New",
-        duration: "9 clips",
-        likes: 832,
-        views: 2150,
-        liked: false,
-        thumb: "https://i.ibb.co.com/LDsh4vMD/file-00000000662481fb8d2ef34dfb0eb26e.png",
-        screenshots: [
-          "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg",
-          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png"
-        ],
-        requiredAds: 4,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 3,
-        title: "স্ত্রীকে অবহেলা! কেন এমন করছে? বাংলা ড্রামা স্পেশাল",
-        category: "Viral",
-        duration: "19min",
-        likes: 721,
-        views: 1890,
-        liked: false,
-        thumb: "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png",
-        screenshots: [
-          "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg",
-          "https://i.ibb.co.com/7J5zDszb/8cbf3493-9c0b-43ec-941d-94fe4b7e8794.png"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 4,
-        title: "দুই বন্ধু একসাথে স্পেশাল মেগা আনলিমিটেড ভিডিও ক্লিপস",
-        category: "New",
-        duration: "4min",
-        likes: 815,
-        views: 2430,
-        liked: false,
-        thumb: "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg",
-        screenshots: [
-          "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
-          "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg"
-        ],
-        requiredAds: 2,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 5,
-        title: "Dashi Unlimited স্পেশাল কালেকশন পর্ব - মেগা ড্রাইভ লিংক",
-        category: "Viral",
-        duration: "10 Clips",
-        likes: 1319,
-        views: 3520,
-        liked: false,
-        thumb: "https://i.ibb.co.com/7J5zDszb/8cbf3493-9c0b-43ec-941d-94fe4b7e8794.png",
-        screenshots: [
-          "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
-          "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 6,
-        title: "কি তোমায় না দিলো! দেখে নাও তাড়াতাড়ি NEW Collection!!",
-        category: "Viral",
-        duration: "2min",
-        likes: 2066,
-        views: 4890,
-        liked: false,
-        thumb: "https://i.ibb.co.com/wZxkHJ4g/6016433a-8fb3-4788-89ac-8302c13af8bc.png",
-        screenshots: [
-          "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg",
-          "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png"
-        ],
-        requiredAds: 4,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 7,
-        title: "টক্সিক অ্যাকশন থ্রিলার HD 720p & 1080p ফুল মুভি ড্রাইভ",
-        category: "Movies",
-        duration: "3.57 Hours",
-        likes: 693,
-        views: 3100,
-        liked: false,
-        thumb: "https://i.ibb.co.com/SDh4phgn/Screenshot-20260902-204136-Telegraph.jpg",
-        screenshots: [
-          "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg",
-          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 8,
-        title: "ভাবীকে একা পেয়ে শেষে কি করলো!! New Collection",
-        category: "Viral",
-        duration: "13min",
-        likes: 1719,
-        views: 4120,
-        liked: false,
-        thumb: "https://i.ibb.co.com/08qVTxC/IMG-20260902-114710-368.jpg",
-        screenshots: [
-          "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png",
-          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 9,
-        title: "একদম ভাইরাল কালেকশন ভিডিও ফুল এইচডি কোয়ালিটি",
-        category: "New",
-        duration: "10 Clips",
-        likes: 997,
-        views: 2840,
-        liked: false,
-        thumb: "https://i.ibb.co.com/ymCVW4DR/file-00000000ade081f899aac59f86ab8e24.png",
-        screenshots: [
-          "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp",
-          "https://i.ibb.co.com/Ld77YL2S/Screenshot-20260906-123245-Telegraph.jpg"
-        ],
-        requiredAds: 3,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      },
-      {
-        id: 10,
-        title: "স্পেশাল ভাইরাল নাটক ও ক্লিপস সম্পূর্ণ ফ্রিতে দেখে নিন",
-        category: "Movies",
-        duration: "25min",
-        likes: 1120,
-        views: 3900,
-        liked: false,
-        thumb: "https://i.ibb.co.com/sdMDpzw1/6a859c46866dc.webp",
-        screenshots: [
-          "https://i.ibb.co.com/7dB8x16S/file-000000001c208208af6ed4f5649a10fb.png",
-          "https://i.ibb.co.com/761MtLK/IMG-20260904-161212-454.jpg"
-        ],
-        requiredAds: 4,
-        watchedAds: 0,
-        targetLink: "https://t.me"
-      }
-    ];
-
-    let currentVideoId = null;
-    let currentCategory = 'All';
-    let isDarkMode = true;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0b0f16">
+    <title>Movie Box - Streaming Platform</title>
     
-    // আপনার দেওয়া বিজ্ঞাপনের নির্দিষ্ট নেটওয়ার্ক স্মার্টলিংক
-    const AD_NETWORK_URL = "https://www.profitableratecpmnetwork.com/syp87vwp?key=f6f33d081102bce4009209a211ad25dc";
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body {
+            background-color: #0b0f16; color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            width: 100%; max-width: 1280px; margin: 0 auto;
+            background-color: #0b0f16; min-height: 100vh;
+            position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
 
-    // পেজ লোড হলে ইনিশিয়ালাইজেশন
-    window.addEventListener('DOMContentLoaded', () => {
-      // ডিফল্ট ডার্ক মোড সেটআপ
-      document.documentElement.classList.add('dark');
-      updateThemeIcons();
-      renderVideoCards(videoData);
-    });
+        .nav-active { color: #00d27a !important; }
+        .snap-x { scroll-snap-type: x mandatory; }
+        .snap-center { scroll-snap-align: center; }
 
-    // ডার্ক ও লাইট থিম পরিবর্তন
-    function toggleTheme() {
-      isDarkMode = !isDarkMode;
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      updateThemeIcons();
-    }
+        /* =========================================
+           ULTIMATE PLAYER STYLES
+           ========================================= */
+        #video-wrapper:fullscreen, #video-wrapper:-webkit-full-screen {
+            width: 100vw !important; height: 100vh !important;
+            max-width: none !important; max-height: none !important;
+            border-radius: 0 !important; background-color: #000;
+        }
 
-    function updateThemeIcons() {
-      const sunIcon = document.getElementById('sunIcon');
-      const moonIcon = document.getElementById('moonIcon');
-      if (isDarkMode) {
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      } else {
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-      }
-    }
+        /* Hide all native controls */
+        video::-webkit-media-controls { display: none !important; }
+        video::-webkit-media-controls-enclosure { display: none !important; }
+        video { outline: none; }
 
-    // সাইডবার টগল
-    function toggleSidebar(open) {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (open) {
-        sidebar.classList.remove('-translate-x-full');
-        backdrop.classList.remove('hidden');
-      } else {
-        sidebar.classList.add('-translate-x-full');
-        backdrop.classList.add('hidden');
-      }
-    }
+        /* Custom Progress Bar (Touchable) */
+        input[type=range] { 
+            -webkit-appearance: none; width: 100%; background: transparent; 
+            cursor: pointer; pointer-events: auto; z-index: 60; margin: 0; padding: 10px 0;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: #00d27a; cursor: pointer; margin-top: -6px; box-shadow: 0 0 8px rgba(0,210,122,0.8);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: rgba(255, 255, 255, 0.3); border-radius: 2px;
+        }
 
-    // সার্চ বার টগল
-    function toggleSearchBar() {
-      const panel = document.getElementById('searchPanel');
-      panel.classList.toggle('hidden');
-      if (!panel.classList.contains('hidden')) {
-        document.getElementById('searchInput').focus();
-      }
-    }
+        /* Floating Settings Buttons */
+        .player-float-btn {
+            background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%; color: #fff; cursor: pointer; backdrop-filter: blur(10px);
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; pointer-events: auto; z-index: 50;
+        }
+        .player-float-btn:hover, .player-float-btn:active { background: rgba(0,210,122,0.2); color: #00d27a; border-color: #00d27a; }
 
-    // ভিডিও কার্ড রেন্ডার ফাংশন
-    function renderVideoCards(videos) {
-      const listContainer = document.getElementById('videoList');
-      listContainer.innerHTML = '';
+        #custom-controls { transition: opacity 0.3s ease; }
+        #gesture-layer { touch-action: none; } /* Prevents page scroll when swiping video */
+    </style>
+</head>
+<body class="flex justify-center bg-gray-900">
 
-      if (videos.length === 0) {
-        listContainer.innerHTML = `
-          <div class="text-center py-12 text-gray-400 text-sm">
-            কোনো ভিডিও পাওয়া যায়নি!
-          </div>
-        `;
-        return;
-      }
+    <div class="app-container flex flex-col" id="main-app-container">
 
-      videos.forEach(video => {
-        const card = document.createElement('div');
-        card.className = "rounded-2xl overflow-hidden bg-white dark:bg-brand-cardDark border border-gray-200 dark:border-brand-borderDark shadow-md transition-all hover:shadow-xl";
-
-        card.innerHTML = `
-          <!-- থাম্বনেইল অংশ -->
-          <div class="relative w-full aspect-video bg-black cursor-pointer overflow-hidden group" onclick="openVideoDetail(${video.id})">
-            <img src="${video.thumb}" alt="${video.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x340/181a20/f59e0b?text=Video+Thumbnail'">
-            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
-            
-            <!-- সময় / ক্লিপস ব্যাজ -->
-            <div class="absolute bottom-2 right-2 px-2 py-0.5 bg-black/85 backdrop-blur rounded text-[11px] font-bold text-white">
-              ${video.duration}
-            </div>
-
-            <!-- প্লে আইকন ওভারলে -->
-            <div class="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition">
-              <div class="w-12 h-12 rounded-full bg-brand-gold/90 text-black flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
-                <svg class="w-6 h-6 fill-current ml-0.5" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- বিস্তারিত ও মেটাডাটা -->
-          <div class="p-3.5 space-y-3">
-            <h3 class="text-sm font-bold text-gray-900 dark:text-white leading-snug cursor-pointer line-clamp-2 hover:text-brand-gold transition" onclick="openVideoDetail(${video.id})">
-              ${video.title}
-            </h3>
-
-            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-100 dark:border-brand-borderDark">
-              <div class="flex items-center space-x-4">
-                <!-- লাইক বোতাম -->
-                <button onclick="toggleCardLike(event, ${video.id})" class="flex items-center gap-1 hover:text-red-500 transition ${video.liked ? 'text-red-500 font-bold' : ''}">
-                  <svg class="w-4 h-4 ${video.liked ? 'fill-current' : 'fill-none stroke-current'}" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                  </svg>
-                  <span>${video.likes}</span>
-                </button>
-
-                <!-- ভিউ কাউন্ট -->
-                <div class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                  <span>${video.views}</span>
+        <!-- ==========================================
+             HOME VIEW
+        =========================================== -->
+        <div id="home-view" class="flex-1 pb-24 overflow-y-auto">
+            <header class="pt-4 pb-2 px-4 sticky top-0 bg-[#0b0f16]/95 backdrop-blur-md z-40">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center shrink-0 shadow-lg">
+                        <i class="fa-solid fa-play text-white text-xs ml-0.5"></i>
+                    </div>
+                    <div class="flex-1 bg-[#1a1f29] rounded-full flex items-center px-4 py-2 border border-gray-800 max-w-2xl">
+                        <i class="fa-solid fa-magnifying-glass text-gray-500 text-sm mr-2"></i>
+                        <input type="text" placeholder="Search movies, series..." class="bg-transparent border-none outline-none text-sm text-gray-200 w-full placeholder-gray-500">
+                    </div>
                 </div>
-              </div>
+                <nav class="flex items-center gap-5 mt-4 overflow-x-auto no-scrollbar text-[15px] font-medium text-gray-400 border-b border-gray-800 pb-1">
+                    <a href="#" class="text-white font-bold whitespace-nowrap shrink-0 relative pb-1">Trending<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[3px] bg-white rounded-full"></span></a>
+                    <a href="#" class="whitespace-nowrap shrink-0 hover:text-white transition">Movie</a>
+                    <a href="#" class="whitespace-nowrap shrink-0 hover:text-white transition">TV Series</a>
+                </nav>
+            </header>
 
-              <!-- শেয়ার বাটন -->
-              <button onclick="shareLink(event, '${video.title}')" class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-brand-gold transition" title="শেয়ার করুন">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                </svg>
-              </button>
+            <main>
+                <!-- Hero Banner Carousel -->
+                <section class="mt-2 md:mt-4 w-full overflow-hidden md:px-4">
+                    <div class="flex overflow-x-auto snap-x no-scrollbar w-full md:rounded-2xl" id="hero-carousel">
+                        
+                        <!-- Hero Item 1: MP4 Test (100% Works) -->
+                        <div class="relative w-full shrink-0 snap-center aspect-[4/3] sm:aspect-video md:aspect-[3/1] lg:aspect-[4/1] cursor-pointer bg-black overflow-hidden" onclick="openPlayer(999)">
+                            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-2xl scale-125">
+                            <div class="absolute inset-0 w-full h-full flex justify-center items-center z-10 py-0 md:py-4">
+                                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" loading="lazy" class="w-full h-full object-cover md:object-contain md:rounded-lg shadow-2xl">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f16] via-[#0b0f16]/30 to-transparent z-10"></div>
+                            <div class="absolute bottom-4 left-0 w-full px-4 flex gap-3 md:max-w-md z-20">
+                                <div class="bg-[#1a1f29]/90 backdrop-blur-md rounded-xl p-2 flex items-center gap-3 w-full border border-gray-700/50 shadow-lg">
+                                    <div class="w-10 h-14 rounded-lg bg-green-500 flex items-center justify-center font-bold text-xs text-center p-1">Test</div>
+                                    <div class="flex-1"><h4 class="text-sm font-semibold truncate text-green-400">MP4 Test Video</h4></div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs shrink-0"><i class="fa-solid fa-play ml-0.5"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero Item 2: Irumudi -->
+                        <div class="relative w-full shrink-0 snap-center aspect-[4/3] sm:aspect-video md:aspect-[3/1] lg:aspect-[4/1] cursor-pointer bg-black overflow-hidden" onclick="openPlayer(9)">
+                            <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/y0huHbMUwEkp0ETChWLOD8MriNr.jpg" loading="lazy" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-2xl scale-125">
+                            <div class="absolute inset-0 w-full h-full flex justify-center items-center z-10 py-0 md:py-4">
+                                <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/y0huHbMUwEkp0ETChWLOD8MriNr.jpg" loading="lazy" class="w-full h-full object-cover md:object-contain md:rounded-lg md:shadow-2xl">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f16] via-[#0b0f16]/30 to-transparent z-10"></div>
+                            <div class="absolute bottom-4 left-0 w-full px-4 flex gap-3 md:max-w-md z-20">
+                                <div class="bg-[#1a1f29]/90 backdrop-blur-md rounded-xl p-2 flex items-center gap-3 w-full border border-gray-700/50 shadow-lg">
+                                    <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/y0huHbMUwEkp0ETChWLOD8MriNr.jpg" class="w-10 h-14 rounded-lg object-cover">
+                                    <div class="flex-1"><h4 class="text-sm font-semibold truncate">Irumudi (2026)</h4></div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs shrink-0"><i class="fa-solid fa-play ml-0.5"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+                
+                <!-- Trending Movies Section -->
+                <section class="mt-6 pb-2">
+                    <div class="flex items-center justify-between px-4 mb-4">
+                        <h2 class="text-lg md:text-xl font-bold border-l-4 border-green-500 pl-2">Trending Movies</h2>
+                    </div>
+                    <div id="movie-list-container" class="flex gap-4 px-4 overflow-x-auto no-scrollbar pb-2"></div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- ==========================================
+             DOWNLOADS VIEW
+        =========================================== -->
+        <div id="downloads-view" class="hidden flex-1 pb-24 overflow-y-auto">
+            <header class="pt-6 pb-4 px-4 sticky top-0 bg-[#0b0f16]/95 backdrop-blur-md z-40 border-b border-gray-800">
+                <h1 class="text-2xl font-bold">My Downloads</h1>
+            </header>
+            <main class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="downloaded-items-container"></main>
+        </div>
+
+        <!-- ==========================================
+             BOTTOM NAVIGATION
+        =========================================== -->
+        <nav class="fixed bottom-0 w-full max-w-[1280px] bg-[#111620]/95 backdrop-blur-lg border-t border-gray-800 flex justify-around py-3 px-2 z-50">
+            <a href="#" onclick="switchTab('home-view')" id="nav-home" class="nav-active flex flex-col items-center gap-1 text-gray-500 hover:text-[#00d27a] transition w-full">
+                <i class="fa-solid fa-house text-xl"></i>
+                <span class="text-[10px] md:text-xs font-medium">Home</span>
+            </a>
+            <a href="#" onclick="switchTab('downloads-view')" id="nav-downloads" class="flex flex-col items-center gap-1 text-gray-500 hover:text-[#00d27a] transition w-full">
+                <i class="fa-solid fa-arrow-down-to-bracket text-xl relative">
+                    <span id="dl-badge" class="hidden absolute -top-1 -right-2 bg-red-500 text-white text-[8px] font-bold px-1 rounded-full animate-bounce">New</span>
+                </i>
+                <span class="text-[10px] md:text-xs font-medium">Downloads</span>
+            </a>
+        </nav>
+
+        <!-- ==========================================
+             VIDEO PLAYER UI (ULTIMATE FIX)
+        =========================================== -->
+        <div id="player-view" class="hidden flex-1 flex-col bg-[#0b0f16] min-h-screen pb-10 relative">
+            
+            <!-- Player Wrapper -->
+            <section id="video-wrapper" class="w-full bg-black relative flex-shrink-0" style="aspect-ratio: 16/9; max-height: 100vh; margin: 0 auto;">
+                
+                <!-- Native Video Element -->
+                <video id="live-player" class="absolute inset-0 w-full h-full" style="object-fit: contain;" playsinline></video>
+                
+                <!-- Loading Indicator -->
+                <div id="playerLoading" class="hidden absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+                    <i class="fa-solid fa-circle-notch fa-spin text-5xl text-[#00d27a] drop-shadow-lg"></i>
+                </div>
+
+                <!-- Player Error Message -->
+                <div id="playerError" class="hidden absolute inset-0 bg-black/90 z-[100] flex-col items-center justify-center text-white p-4 text-center pointer-events-auto">
+                    <i class="fa-solid fa-triangle-exclamation text-5xl text-yellow-500 mb-3"></i>
+                    <p class="mb-2 text-lg font-bold">ভিডিওটি প্লে করা যাচ্ছে না!</p>
+                    <p class="mb-4 text-sm text-gray-400">এই ফাইলের ফরম্যাট (.mkv/.hevc) আপনার ব্রাউজার সাপোর্ট করে না।</p>
+                    <button onclick="goBack()" class="bg-[#00d27a] text-black px-6 py-2 rounded-full font-bold shadow-lg">ফিরে যান</button>
+                </div>
+
+                <!-- OSD Indicators (Center popup for volume/stretch) -->
+                <div id="action-indicator" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-4 rounded-xl z-[60] items-center gap-3 text-2xl font-bold shadow-2xl pointer-events-none"></div>
+
+                <!-- GESTURE LAYER (Z-index 10, beneath controls) -->
+                <div id="gesture-layer" class="absolute inset-0 z-10 cursor-pointer touch-none"></div>
+
+                <!-- CUSTOM CONTROLS OVERLAY (Z-index 20) -->
+                <div id="custom-controls" class="absolute inset-0 z-20 flex flex-col justify-between opacity-100 transition-opacity duration-300 pointer-events-none">
+                    
+                    <!-- TOP BAR -->
+                    <div class="w-full flex items-center p-4 pt-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-auto">
+                        <button onclick="goBack()" class="text-white hover:text-[#00d27a] p-2 text-2xl transition drop-shadow mr-2"><i class="fa-solid fa-arrow-left"></i></button>
+                        <span id="player-title-top" class="text-base sm:text-lg font-bold text-white drop-shadow-md truncate">Loading...</span>
+                    </div>
+
+                    <!-- CENTER PLAY/PAUSE -->
+                    <div class="flex-1 flex items-center justify-center pointer-events-none">
+                        <button id="center-play-btn" class="pointer-events-auto text-white transform hover:scale-110 transition w-24 h-24 flex items-center justify-center drop-shadow-2xl z-[25]" onclick="togglePlay()">
+                            <i id="center-play-icon" class="fa-solid fa-play text-6xl md:text-7xl opacity-90 hover:opacity-100"></i>
+                        </button>
+                    </div>
+
+                    <!-- BOTTOM BAR -->
+                    <!-- pointer-events-auto is CRITICAL here so touches don't pass through to gesture-layer -->
+                    <div class="w-full bg-gradient-to-t from-black via-black/80 to-transparent px-4 pb-4 pt-20 relative pointer-events-auto">
+                        
+                        <!-- Floating Setting Buttons (Absolute right) -->
+                        <div class="absolute right-4 bottom-[70px] flex gap-3 z-50">
+                            <button class="player-float-btn" onclick="cycleStretch()" title="Aspect Ratio"><i id="stretch-icon" class="fa-solid fa-crop-simple"></i></button>
+                            <button class="player-float-btn" onclick="toggleFullscreen()" title="Fullscreen"><i id="fullscreen-icon" class="fa-solid fa-expand"></i></button>
+                        </div>
+
+                        <!-- Timeline & Progress Row -->
+                        <div class="flex items-center gap-3 w-full bg-black/40 p-2 rounded-xl backdrop-blur-md border border-white/10 z-50">
+                            <button onclick="togglePlay()" class="text-white hover:text-[#00d27a] transition text-xl w-8 flex justify-center"><i id="bottom-play-icon" class="fa-solid fa-play"></i></button>
+                            <span id="current-time" class="text-xs sm:text-sm text-white/90 font-medium w-12 text-right">00:00</span>
+                            
+                            <!-- The Seek Bar -->
+                            <input type="range" id="progress-bar" class="flex-1" value="0" step="0.1">
+                            
+                            <span id="duration-time" class="text-xs sm:text-sm text-white/90 font-medium w-12">00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Information Section -->
+            <div class="flex-1 overflow-y-auto" id="info-section-wrapper">
+                <section class="p-4 max-w-4xl mx-auto" id="info-section">
+                    <div>
+                        <h1 id="player-title" class="text-2xl md:text-3xl font-bold mb-2">Title</h1>
+                        <div class="flex flex-wrap items-center gap-2 text-xs md:text-sm text-gray-400 font-medium mb-4">
+                            <span id="player-kdrama-badge" class="hidden bg-rose-600 text-white px-2 py-0.5 rounded text-[10px] md:text-xs font-bold tracking-wider">KDRAMA</span>
+                            <span class="text-amber-500"><i class="fa-solid fa-star text-[10px] md:text-xs"></i> <span id="player-rating">0.0</span></span>
+                            <span>|</span><span id="player-year">YYYY</span>
+                            <span>|</span><span id="player-genre">Category</span>
+                        </div>
+                        <p id="player-desc" class="text-sm text-gray-400 mb-6"></p>
+                    </div>
+
+                    <div class="grid grid-cols-4 md:flex md:gap-4 gap-2 border-b border-gray-800 pb-5">
+                        <button class="bg-[#1c212a] hover:bg-gray-700 text-gray-200 py-2 rounded-lg text-[11px] md:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-plus text-sm"></i> Add to list
+                        </button>
+                        <button onclick="shareLink()" class="bg-[#1c212a] hover:bg-gray-700 text-gray-200 py-2 rounded-lg text-[11px] md:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-share-nodes text-sm"></i> Share
+                        </button>
+                        <button onclick="startDownload()" class="bg-[#1c212a] text-[#00d27a] py-2 rounded-lg text-[11px] md:text-sm font-bold flex flex-col items-center justify-center gap-1.5 border border-[#00d27a]/30">
+                            <i class="fa-solid fa-download text-sm"></i> Download
+                        </button>
+                        <button onclick="switchTab('downloads-view')" class="bg-[#1c212a] hover:bg-gray-700 text-gray-200 py-2 rounded-lg text-[11px] md:text-sm font-medium flex flex-col items-center justify-center gap-1.5 transition">
+                            <i class="fa-solid fa-file-arrow-down text-sm"></i> View Dls
+                        </button>
+                    </div>
+
+                    <div class="pt-4 pb-2 border-b border-gray-800">
+                        <div class="flex items-center gap-2 mb-4">
+                            <h3 class="font-bold text-lg md:text-xl">Episodes</h3>
+                        </div>
+                        <div id="episodes-container" class="mt-4">
+                            <div id="episodes-list" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 gap-2.5"></div>
+                        </div>
+                    </div>
+                </section>
             </div>
-          </div>
-        `;
+        </div>
+    </div>
 
-        listContainer.appendChild(card);
-      });
-    }
+    <!-- ==========================================
+         JAVASCRIPT DATA & LOGIC
+    =========================================== -->
+    <script>
+        // Database
+        const contentData = [
+            {
+                id: 999,
+                title: "Test Video (MP4 Format)", type: "movie", isKDrama: false,
+                poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+                rating: "10/10", year: "2026", genre: "Testing, Standard",
+                desc: "This is a standard MP4 video to prove that the player works perfectly.",
+                episodes: [
+                    { epNum: "Play MP4 (Works)", link: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }
+                ]
+            },
+            {
+                id: 9,
+                title: "Irumudi (2026)", type: "movie", isKDrama: false,
+                poster: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/y0huHbMUwEkp0ETChWLOD8MriNr.jpg",
+                rating: "N/A", year: "2026", genre: "Action, Drama",
+                desc: "Irumudi (2026) DS4K WEB-DL [Hindi-Telugu]",
+                episodes: [
+                    { epNum: "Watch Movie", link: "https://pub-f332b841dcd645d494b56b96216bdc45.r2.dev/CINEFREAK.TOP%20-%20Irumudi%20%282026%29%20DS4K%20WEB-DL%20%5BHindi-Telugu%5D%20720p%20HEVC%20ESub.mkv" }
+                ]
+            },
+            {
+                id: 8,
+                title: "Lust Stories 3 (2026)", type: "movie", isKDrama: false,
+                poster: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/1GBe4TeCeXa1ENg0rv2JH8cH0ry.jpg",
+                rating: "N/A", year: "2026", genre: "Romance, Drama",
+                desc: "Lust Stories 3 (2026) DS4K WEB-DL [Hindi]",
+                episodes: [
+                    { epNum: "Watch Movie", link: "https://pub-e2976e423f3545829ba627b7ab84b5a6.r2.dev/CINEFREAK.TOP%20-%20Lust%20Stories-3%20(2026)%20DS4K%20WEB-DL%20[Hindi]%20720p%20HEVC%20ESub.mkv" }
+                ]
+            },
+            {
+                id: 7,
+                title: "Bachelor Point", type: "series", isKDrama: false,
+                poster: "https://pub-69b6234af505413bbeac2bbc8039195c.r2.dev/poster_wm7n1787231362.jpg",
+                rating: "8.5/10", year: "2026", genre: "Comedy, Drama",
+                desc: "A story of friends living together in a bachelor point.",
+                episodes: [
+                    { epNum: "105-112", link: "https://pub-538edaef4a1246c989cd0c69ae08ce40.r2.dev/media/csYdVqmU/main?token=1787270400-45d2a0bfe7e8bb8902f136896c3b20e3778a52e3" }
+                ]
+            }
+        ];
 
-    // ফিল্টার ক্যাটাগরি
-    function selectCategory(category) {
-      currentCategory = category;
-      const chips = document.querySelectorAll('.category-chip');
-      chips.forEach(chip => {
-        if (chip.textContent.includes(category) || (category === 'All' && chip.textContent.includes('All'))) {
-          chip.className = "category-chip active-chip px-4 py-2 rounded-full border border-brand-gold bg-brand-gold text-white whitespace-nowrap shadow-sm";
-        } else {
-          chip.className = "category-chip px-4 py-2 rounded-full border border-gray-300 dark:border-brand-borderDark bg-gray-100 dark:bg-brand-cardDark text-gray-700 dark:text-gray-300 whitespace-nowrap";
+        let currentActiveItem = null, currentEpIndex = 0, previousView = 'home-view';
+        let slideInterval;
+        let currentSlide = 0;
+
+        function startAutoSlide() {
+            clearInterval(slideInterval); 
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 2;
+                document.getElementById('hero-carousel').scrollTo({ left: document.getElementById('hero-carousel').clientWidth * currentSlide, behavior: 'smooth' });
+            }, 3500); 
         }
-      });
 
-      if (category === 'All') {
-        renderVideoCards(videoData);
-      } else {
-        const filtered = videoData.filter(v => v.category === category);
-        renderVideoCards(filtered);
-      }
-    }
+        function switchTab(viewId) {
+            ['home-view', 'downloads-view', 'player-view'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            window.scrollTo(0, 0);
 
-    // সার্চ ফিল্টার
-    function filterVideosBySearch() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = videoData.filter(v => v.title.toLowerCase().includes(query));
-      renderVideoCards(filtered);
-    }
-
-    // ভিডিও ডিটেইল ওপেন করা
-    function openVideoDetail(id) {
-      currentVideoId = id;
-      const video = videoData.find(v => v.id === id);
-      if (!video) return;
-
-      // ভিউ পরিবর্তন
-      document.getElementById('homeView').classList.add('hidden');
-      document.getElementById('detailView').classList.remove('hidden');
-      document.getElementById('menuBtn').classList.add('hidden');
-      document.getElementById('navBackBtn').classList.remove('hidden');
-
-      // ডাটা বাইন্ডিং
-      document.getElementById('detailThumb').src = video.thumb;
-      document.getElementById('detailDuration').textContent = video.duration;
-      document.getElementById('detailTitle').textContent = video.title;
-      document.getElementById('detailCategory').textContent = video.category;
-      document.getElementById('detailLikeCount').textContent = `${video.likes} Likes`;
-      document.getElementById('detailViewCount').textContent = `${video.views + 1} Views`;
-      video.views += 1;
-
-      // স্ক্রিনশট গ্যালারি
-      const shotsContainer = document.getElementById('detailScreenshots');
-      shotsContainer.innerHTML = '';
-      video.screenshots.forEach(shot => {
-        const img = document.createElement('img');
-        img.src = shot;
-        img.className = "rounded-lg border border-gray-200 dark:border-brand-borderDark object-cover w-full h-24";
-        shotsContainer.appendChild(img);
-      });
-
-      // আনলকার স্টেট আপডেট
-      updateUnlockerUI(video);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // হোমভিউতে ফেরত যাওয়া
-    function showHomePage() {
-      document.getElementById('detailView').classList.add('hidden');
-      document.getElementById('homeView').classList.remove('hidden');
-      document.getElementById('navBackBtn').classList.add('hidden');
-      document.getElementById('menuBtn').classList.remove('hidden');
-      currentVideoId = null;
-      renderVideoCards(videoData);
-    }
-
-    // আনলকার ইন্টারফেস আপডেট
-    function updateUnlockerUI(video) {
-      const progressPercent = (video.watchedAds / video.requiredAds) * 100;
-      document.getElementById('adProgressBar').style.width = `${progressPercent}%`;
-      document.getElementById('adProgressText').textContent = `${video.watchedAds}/${video.requiredAds} Completed`;
-      document.getElementById('adGoalTitle').textContent = `ভিডিও আনলক করতে ${video.requiredAds}টি বিজ্ঞাপন দেখুন`;
-
-      const btnLabel = document.getElementById('unlockBtnLabel');
-      const actionBtn = document.getElementById('unlockActionBtn');
-
-      if (video.watchedAds >= video.requiredAds) {
-        btnLabel.textContent = "ভিডিও ডাউনলোড / প্লে করুন";
-        actionBtn.className = "w-full py-3.5 px-4 bg-green-500 hover:bg-green-600 text-white font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98] pulse-glow";
-        document.getElementById('lockIcon').innerHTML = `
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
-        `;
-      } else {
-        btnLabel.textContent = `Unlock Video (${video.watchedAds}/${video.requiredAds})`;
-        actionBtn.className = "w-full py-3.5 px-4 bg-brand-gold hover:bg-brand-goldHover text-black font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98]";
-        document.getElementById('lockIcon').innerHTML = `
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-        `;
-      }
-    }
-
-    // অ্যাড আনলক প্রক্রিয়া এবং পপআপ সিমুলেশন
-    function triggerAdUnlockProcess() {
-      const video = videoData.find(v => v.id === currentVideoId);
-      if (!video) return;
-
-      // যদি ইতোমধ্যে সব বিজ্ঞাপন দেখা হয়ে যায় -> লিংকে রিডাইরেক্ট হবে
-      if (video.watchedAds >= video.requiredAds) {
-        showToast("ভিডিও আনলক হয়েছে! লিংকে নিয়ে যাওয়া হচ্ছে...");
-        setTimeout(() => {
-          window.open(video.targetLink, '_blank');
-        }, 800);
-        return;
-      }
-
-      // বিজ্ঞাপন প্রদর্শন মোডাল ওপেন
-      const modal = document.getElementById('adModal');
-      const timerEl = document.getElementById('countdownTimer');
-      modal.classList.remove('hidden');
-
-      let timeLeft = 3;
-      timerEl.textContent = `${timeLeft}s`;
-
-      const timer = setInterval(() => {
-        timeLeft -= 1;
-        if (timeLeft > 0) {
-          timerEl.textContent = `${timeLeft}s`;
-        } else {
-          clearInterval(timer);
-          modal.classList.add('hidden');
-
-          // বিজ্ঞাপন সমাপ্তি কাউন্ট বৃদ্ধি
-          video.watchedAds += 1;
-          updateUnlockerUI(video);
-
-          if (video.watchedAds >= video.requiredAds) {
-            showToast("অভিনন্দন! ভিডিওটি সফলভাবে আনলক হয়েছে 🎉");
-          } else {
-            showToast(`বিজ্ঞাপন সম্পন্ন! আর মাত্র ${video.requiredAds - video.watchedAds}টি বাকি`);
-          }
-
-          // আপনার দেওয়া নির্ধারিত বিজ্ঞাপন লিংক নতুন ট্যাবে ওপেন হবে
-          window.open(AD_NETWORK_URL, '_blank');
+            document.getElementById('nav-home').classList.remove('nav-active');
+            document.getElementById('nav-downloads').classList.remove('nav-active');
+            
+            if(viewId === 'home-view') {
+                document.getElementById('nav-home').classList.add('nav-active');
+                startAutoSlide(); 
+            } else {
+                clearInterval(slideInterval); 
+            }
+            if(viewId === 'downloads-view') {
+                document.getElementById('nav-downloads').classList.add('nav-active');
+                loadDownloads();
+            }
+            if(viewId !== 'player-view') { closePlayerLogic(); }
         }
-      }, 1000);
-    }
 
-    // কার্ডের লাইক টগল
-    function toggleCardLike(event, id) {
-      event.stopPropagation();
-      const video = videoData.find(v => v.id === id);
-      if (video) {
-        video.liked = !video.liked;
-        video.likes += video.liked ? 1 : -1;
-        renderVideoCards(videoData);
-      }
-    }
+        function renderContent() {
+            const movieContainer = document.getElementById('movie-list-container');
+            movieContainer.innerHTML = '';
+            
+            contentData.forEach((item) => {
+                const cardHTML = `
+                <div onclick="openPlayer(${item.id}, 'home-view')" class="relative w-[130px] shrink-0 cursor-pointer group">
+                    <div class="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-900 border border-gray-800">
+                        <img src="${item.poster}" class="w-full h-full object-cover">
+                        <div class="absolute top-1 right-1 bg-black/60 text-[10px] px-1.5 py-0.5 rounded text-gray-200">Movie</div>
+                    </div>
+                    <h3 class="text-sm font-medium mt-2 truncate text-gray-200">${item.title}</h3>
+                </div>`;
+                movieContainer.innerHTML += cardHTML;
+            });
+            startAutoSlide(); 
+        }
 
-    // ডিটেইল পেজের লাইক টগল
-    function toggleDetailLike() {
-      const video = videoData.find(v => v.id === currentVideoId);
-      if (video) {
-        video.liked = !video.liked;
-        video.likes += video.liked ? 1 : -1;
-        document.getElementById('detailLikeCount').textContent = `${video.likes} Likes`;
-      }
-    }
+        function openPlayer(id, fromView = 'home-view') {
+            previousView = fromView;
+            currentActiveItem = contentData.find(item => item.id === id);
+            
+            document.getElementById('player-title').innerText = currentActiveItem.title;
+            document.getElementById('player-desc').innerText = currentActiveItem.desc || "";
+            document.getElementById('live-player').poster = currentActiveItem.poster;
 
-    // শেয়ার ফাংশন (ক্লিপবোর্ড বা নেটিভ শেয়ার)
-    function shareLink(event, title) {
-      event.stopPropagation();
-      const shareUrl = window.location.href;
-      if (navigator.share) {
-        navigator.share({
-          title: title,
-          url: shareUrl
-        }).catch(() => {});
-      } else {
-        // ফলব্যাক কপি
-        const dummy = document.createElement('input');
-        document.body.appendChild(dummy);
-        dummy.value = shareUrl;
-        dummy.select();
-        document.execCommand('copy');
-        document.body.removeChild(dummy);
-        showToast("ভিডিও লিংক কপি করা হয়েছে!");
-      }
-    }
+            const epList = document.getElementById('episodes-list');
+            epList.innerHTML = '';
+            currentActiveItem.episodes.forEach((ep, index) => {
+                const btnClass = index === 0 ? 'border border-[#00d27a] text-[#00d27a] bg-[#00d27a]/10' : 'bg-[#1c212a] text-gray-400';
+                epList.innerHTML += `<button onclick="playEpisode(${index}, this)" class="ep-btn w-full h-10 px-2 rounded text-sm font-medium ${btnClass} transition truncate">${ep.epNum}</button>`;
+            });
 
-    // টোস্ট নোটিফিকেশন প্রদর্শন
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.remove('opacity-0');
-      toast.classList.add('opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        toast.classList.add('opacity-0');
-      }, 2500);
-    }
-  </script>
-<script src="https://pl20220208.profitableratecpmnetwork.com/2f/39/32/2f3932cd0311417118a8f6bb1a70369c.js"></script>
-<script src="https://pl20220236.profitableratecpmnetwork.com/72/3b/2d/723b2dbe9f93276b66eb6e1d68d986b9.js"></script>
+            switchTab('player-view');
+            playEpisode(0, null);
+        }
+
+        // =========================================
+        // PLAYER CORE, FULLSCREEN, STRETCH & SEEK
+        // =========================================
+        const video = document.getElementById('live-player');
+        const pWrapper = document.getElementById('video-wrapper');
+        const controlsOverlay = document.getElementById('custom-controls');
+        const actionIndicator = document.getElementById('action-indicator');
+        const playerLoading = document.getElementById('playerLoading');
+        const playerError = document.getElementById('playerError');
+        const progressBar = document.getElementById('progress-bar');
+        
+        let hls = null;
+        let playerIdleTimer;
+        let isDraggingRange = false;
+
+        function playEpisode(index, btnElement) {
+            currentEpIndex = index;
+            const src = currentActiveItem.episodes[index].link;
+            
+            if(btnElement) {
+                document.querySelectorAll('.ep-btn').forEach(b => b.className = 'ep-btn w-full h-10 px-2 rounded text-sm font-medium bg-[#1c212a] text-gray-400 transition truncate');
+                btnElement.className = 'ep-btn w-full h-10 px-2 rounded text-sm font-medium border border-[#00d27a] text-[#00d27a] bg-[#00d27a]/10 transition truncate';
+            }
+            
+            let epText = currentActiveItem.type === 'series' ? ` - ${currentActiveItem.episodes[index].epNum}` : "";
+            document.getElementById('player-title-top').innerText = `${currentActiveItem.title}${epText}`;
+            
+            setupPlayerCore(src);
+        }
+
+        function goBack() {
+            // Exit fullscreen if active before going back
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            }
+            switchTab(previousView);
+        }
+
+        function closePlayerLogic() {
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+            if (hls) { hls.destroy(); hls = null; }
+            clearTimeout(playerIdleTimer);
+            controlsOverlay.classList.remove('opacity-0'); 
+            playerLoading.classList.add('hidden');
+            playerError.classList.add('hidden');
+            updatePlayPauseUI(false);
+        }
+
+        // --- FULLSCREEN LOGIC (GUARANTEED FOR MOBILE) ---
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Try to make the wrapper fullscreen
+                if (pWrapper.requestFullscreen) {
+                    pWrapper.requestFullscreen();
+                } else if (pWrapper.webkitRequestFullscreen) {
+                    pWrapper.webkitRequestFullscreen();
+                } else if (video.webkitEnterFullscreen) {
+                    // Fallback for iOS Safari which only allows video element fullscreen
+                    video.webkitEnterFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        };
+        
+        document.addEventListener('fullscreenchange', handleFsChange);
+        document.addEventListener('webkitfullscreenchange', handleFsChange);
+        function handleFsChange() {
+            const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+            document.getElementById('fullscreen-icon').className = isFull ? "fa-solid fa-compress" : "fa-solid fa-expand";
+        }
+
+        // --- ZOOM / STRETCH LOGIC ---
+        const fitModes = ['contain', 'cover', 'fill'];
+        const fitNames = ['Best Fit', 'Zoom', 'Stretch'];
+        let currentFitIndex = 0;
+
+        window.cycleStretch = function() {
+            currentFitIndex = (currentFitIndex + 1) % fitModes.length;
+            video.style.objectFit = fitModes[currentFitIndex];
+            
+            // Update UI
+            showIndicator('<i class="fa-solid fa-crop-simple"></i>', fitNames[currentFitIndex]);
+            const icon = document.getElementById('stretch-icon');
+            if(currentFitIndex === 0) icon.className = "fa-solid fa-crop-simple";
+            else if(currentFitIndex === 1) icon.className = "fa-solid fa-magnifying-glass-plus";
+            else icon.className = "fa-solid fa-expand";
+            
+            showControls();
+        };
+
+        // --- SEEKING / PROGRESS BAR LOGIC ---
+        // Prevent hide UI while interacting with the progress bar
+        progressBar.addEventListener('touchstart', () => { isDraggingRange = true; showControls(); }, {passive: true});
+        progressBar.addEventListener('mousedown', () => { isDraggingRange = true; showControls(); });
+
+        progressBar.addEventListener('input', (e) => {
+            if(video.duration) {
+                let time = (e.target.value / 100) * video.duration;
+                document.getElementById('current-time').innerText = formatTime(time);
+            }
+        });
+
+        progressBar.addEventListener('touchend', (e) => {
+            if(video.duration) video.currentTime = (e.target.value / 100) * video.duration;
+            isDraggingRange = false;
+            showControls();
+        });
+        progressBar.addEventListener('mouseup', (e) => {
+            if(video.duration) video.currentTime = (e.target.value / 100) * video.duration;
+            isDraggingRange = false;
+            showControls();
+        });
+
+        video.addEventListener('timeupdate', () => {
+            if(!isDraggingRange && video.duration) {
+                progressBar.value = (video.currentTime / video.duration) * 100;
+                document.getElementById('current-time').innerText = formatTime(video.currentTime);
+                document.getElementById('duration-time').innerText = formatTime(video.duration);
+            }
+        });
+
+        // --- PLAY/PAUSE AND AUTO-HIDE UI ---
+        function toggleControls() {
+            if (controlsOverlay.classList.contains('opacity-0')) showControls();
+            else hideControls();
+        }
+
+        function showControls() {
+            controlsOverlay.classList.remove('opacity-0');
+            clearTimeout(playerIdleTimer);
+            if (!video.paused && !isDraggingRange && playerError.classList.contains('hidden')) {
+                playerIdleTimer = setTimeout(hideControls, 3500);
+            }
+        }
+
+        function hideControls() {
+            if (!video.paused && !isDraggingRange && playerError.classList.contains('hidden')) {
+                controlsOverlay.classList.add('opacity-0');
+            }
+        }
+
+        function togglePlay() { 
+            video.paused ? video.play().catch(e=>console.log(e)) : video.pause(); 
+            showControls(); 
+        }
+        
+        function updatePlayPauseUI(isPlaying) {
+            document.getElementById('center-play-icon').className = isPlaying ? "hidden" : "fa-solid fa-play text-6xl md:text-7xl opacity-90";
+            document.getElementById('bottom-play-icon').className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
+        }
+
+        video.addEventListener('play', () => { updatePlayPauseUI(true); showControls(); playerLoading.classList.add('hidden'); });
+        video.addEventListener('pause', () => { updatePlayPauseUI(false); showControls(); });
+        video.addEventListener('waiting', () => { playerLoading.classList.remove('hidden'); });
+        video.addEventListener('playing', () => { playerLoading.classList.add('hidden'); });
+
+        // Core Player Engine
+        function setupPlayerCore(url) {
+            playerLoading.classList.remove('hidden');
+            playerError.classList.add('hidden');
+            showControls();
+            
+            const isHls = url.includes('.m3u8');
+
+            if (isHls && typeof Hls !== 'undefined' && Hls.isSupported()) {
+                if (hls) { hls.destroy(); }
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { 
+                    video.play().catch(e=>console.log(e)); 
+                    playerLoading.classList.add('hidden'); 
+                });
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        playerError.classList.remove('hidden');
+                        playerError.classList.add('flex');
+                        playerLoading.classList.add('hidden');
+                    }
+                });
+            } else {
+                if (hls) { hls.destroy(); hls = null; }
+                video.src = url;
+                video.load();
+                video.onerror = function() {
+                    playerError.classList.remove('hidden');
+                    playerError.classList.add('flex');
+                    playerLoading.classList.add('hidden');
+                };
+                video.play().catch(e => console.log("Direct play wait:", e));
+            }
+        }
+
+        // --- ADVANCED GESTURES (SWIPE TO SEEK/VOL) ---
+        const gestureLayer = document.getElementById('gesture-layer');
+        let dragStartX = 0, dragStartY = 0, startVidTime = 0, startVol = 0, dragType = null;
+        let gestureActive = false;
+
+        function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+        function getY(e) { return e.touches ? e.touches[0].clientY : e.clientY; }
+
+        gestureLayer.addEventListener('touchstart', (e) => {
+            gestureActive = true; dragType = null;
+            dragStartX = getX(e); dragStartY = getY(e);
+            startVidTime = video.currentTime; startVol = video.volume;
+        }, {passive: true});
+
+        gestureLayer.addEventListener('touchmove', (e) => {
+            if(!gestureActive || playerError.classList.contains('flex')) return; 
+            
+            const diffX = getX(e) - dragStartX;
+            const diffY = getY(e) - dragStartY;
+
+            if(!dragType) {
+                if(Math.abs(diffX) > 15) { dragType = 'seek'; video.pause(); }
+                else if (Math.abs(diffY) > 15) { dragType = 'volume'; }
+            }
+
+            if(dragType === 'seek') {
+                e.preventDefault(); 
+                let newTime = startVidTime + (diffX * 0.5); // 0.5s per pixel
+                newTime = Math.max(0, Math.min(video.duration || 0, newTime));
+                video.currentTime = newTime;
+                showIndicator('<i class="fa-solid fa-clock"></i>', formatTime(newTime));
+            } else if (dragType === 'volume') {
+                e.preventDefault();
+                let newVol = startVol - (diffY / 150); 
+                newVol = Math.max(0, Math.min(1, newVol));
+                video.volume = newVol;
+                showIndicator('<i class="fa-solid fa-volume-high"></i>', Math.round(newVol * 100) + '%');
+            }
+        }, {passive: false});
+
+        gestureLayer.addEventListener('touchend', (e) => {
+            if(!gestureActive) return;
+            gestureActive = false; 
+            actionIndicator.classList.add('hidden'); actionIndicator.classList.remove('flex');
+            
+            if(dragType === 'seek') { 
+                video.play().catch(e=>console.log(e)); 
+            } else if (!dragType) {
+                toggleControls(); // Tap to toggle UI
+            }
+            dragType = null;
+        });
+
+        // PC Mouse Support
+        gestureLayer.addEventListener('mousedown', (e) => {
+            gestureActive = true; dragType = null;
+            dragStartX = getX(e); dragStartY = getY(e);
+            startVidTime = video.currentTime; startVol = video.volume;
+        });
+        gestureLayer.addEventListener('mousemove', (e) => {
+            if(!gestureActive || playerError.classList.contains('flex')) return; 
+            const diffX = getX(e) - dragStartX;
+            const diffY = getY(e) - dragStartY;
+            if(!dragType) {
+                if(Math.abs(diffX) > 15) { dragType = 'seek'; video.pause(); }
+                else if (Math.abs(diffY) > 15) { dragType = 'volume'; }
+            }
+            if(dragType === 'seek') {
+                let newTime = startVidTime + (diffX * 0.5); 
+                newTime = Math.max(0, Math.min(video.duration || 0, newTime));
+                video.currentTime = newTime;
+                showIndicator('<i class="fa-solid fa-clock"></i>', formatTime(newTime));
+            } else if (dragType === 'volume') {
+                let newVol = startVol - (diffY / 150); 
+                newVol = Math.max(0, Math.min(1, newVol));
+                video.volume = newVol;
+                showIndicator('<i class="fa-solid fa-volume-high"></i>', Math.round(newVol * 100) + '%');
+            }
+        });
+        gestureLayer.addEventListener('mouseup', () => {
+            if(!gestureActive) return;
+            gestureActive = false; actionIndicator.classList.add('hidden'); actionIndicator.classList.remove('flex');
+            if(dragType === 'seek') video.play().catch(e=>console.log(e));
+            else if (!dragType) { toggleControls(); }
+            dragType = null;
+        });
+        gestureLayer.addEventListener('mouseleave', () => { gestureActive = false; actionIndicator.classList.add('hidden'); });
+
+        function showIndicator(iconHtml, text) {
+            actionIndicator.innerHTML = `${iconHtml} <span>${text}</span>`;
+            actionIndicator.classList.remove('hidden'); actionIndicator.classList.add('flex');
+        }
+
+        function formatTime(s) {
+            if (isNaN(s)) return "00:00";
+            return `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+        }
+
+        // Downloads System
+        function startDownload() {
+            const dlId = `${currentActiveItem.id}_${currentEpIndex}`;
+            let downloads = JSON.parse(localStorage.getItem('moviebox_downloads')) || [];
+            if (downloads.find(dl => dl.dlId === dlId)) { alert('Already Downloaded!'); return; }
+            downloads.push({
+                dlId: dlId, movieId: currentActiveItem.id, title: currentActiveItem.title,
+                poster: currentActiveItem.poster, link: currentActiveItem.episodes[currentEpIndex].link, size: "450 MB"
+            });
+            localStorage.setItem('moviebox_downloads', JSON.stringify(downloads));
+            alert('Saved to Downloads!');
+            document.getElementById('dl-badge').classList.remove('hidden');
+        }
+
+        function shareLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Link Copied!');
+        }
+
+        window.onload = renderContent;
+    </script>
 </body>
 </html>
